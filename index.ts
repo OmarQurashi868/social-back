@@ -4,8 +4,9 @@ try {
 } catch {
   console.log("dotenv skipped");
 }
+// import mongoose from "mongoose";
 const mongoose = require("mongoose");
-const cors = require("cors");
+import cors from "cors";
 const app = express();
 app.use(express.json());
 app.use(cors());

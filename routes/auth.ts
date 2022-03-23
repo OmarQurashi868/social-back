@@ -14,10 +14,25 @@ router.post("/register", async (req: Request, res: Response) => {
 
   try {
     const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
     console.log("User added successfully...");
+    return res.status(201).json(savedUser);
   } catch (err: any) {
-    res.status(401).json({ message: err.message });
+    return res.status(400).json({ message: err.message });
+  }
+});
+
+router.post("/login", async (req: Request, res: Response) => {
+  if (req.body.userData === undefined || req.body.userData.username === undefined)
+    return res.status(400).json({ message: "Invalid input" });
+
+  let user;
+  try {
+    user = await User.find({ username: req.body.userData.username });
+    if (user.length === 0)
+      return res.status(404).json({ message: "Username is not registered" });
+    return res.status(200).json(user);
+  } catch (err: any) {
+    return res.status(500).json({ message: err.message });
   }
 });
 
