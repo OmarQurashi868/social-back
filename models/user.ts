@@ -7,45 +7,47 @@ export const saltRounds = 12;
 interface User {
   username: string;
   email: string;
-  passwordHash: string;
+  password: string;
   passwordConfirm: string;
 }
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: [true, "Provide a username"],
+    required: [true, "Username cannot be empty"],
     minlength: [3, "Username must be 3 characters or more"],
     unique: [true, "Username is taken"],
     validate: [validator.isAlphanumeric, "Username must be alphanumerical"],
   },
   email: {
     type: String,
-    required: [true, "Provide an email"],
+    required: [true, "Email cannot be empty"],
     // lowercase: true,
     unique: [true, "This email is already associated with an account"],
     validate: [validator.isEmail, "Provide a valid email"],
   },
-  passwordHash: {
+  password: {
     type: String,
-    required: [true, "Provide a password"],
+    required: [true, "Password cannot be empty"],
     minlength: [8, "Password must be 8 characters or more"],
+    select: false,
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Provide a password"],
+    required: [true, "Confirm your password"],
     validate: {
       validator: function (this: User, passwordConfirm: String) {
-        return passwordConfirm === this.passwordHash;
+        return passwordConfirm === this.password;
       },
-      message: "Passwords don't match.",
+      message: "Passwords don't match",
     },
+    select: false,
   },
   creationDate: { type: Date, default: Date.now },
 });
 
 userSchema.pre("save", async function (next) {
-  this.passwordHash = await bcrypt.hash(this.passwordHash, saltRounds);
+  this.password = await bcrypt.hash(this.password, saltRounds);
   this.passwordConfirm = undefined;
   next();
 });
