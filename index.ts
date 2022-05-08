@@ -19,7 +19,9 @@ db.once("open", () => console.log("Database connected..."));
 
 // Add routes
 import authRouter from "./routes/auth";
+import postRouter from "./routes/posts";
 app.use("/auth", authRouter);
+app.use("/posts/", postRouter)
 
 // Listen
 app.listen(process.env.PORT, () =>

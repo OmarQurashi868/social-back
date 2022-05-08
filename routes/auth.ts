@@ -8,7 +8,6 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.post("/register", async (req: Request, res: Response) => {
-  // TODO: Validate user
   const newUser = new User(req.body.userData);
   try {
     const savedUser = await newUser.save();
@@ -28,7 +27,6 @@ router.post("/login", async (req: Request, res: Response) => {
   )
     return res.status(400).json({ message: "Fields cannot be left empty" });
 
-  // TODO: Validate user
   try {
     const user = await User.findOne({
       username: req.body.userData.username,
