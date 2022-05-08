@@ -11,6 +11,8 @@ interface User {
   passwordConfirm: string;
 }
 
+// Add user sessions for session verification
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,

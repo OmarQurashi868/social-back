@@ -41,7 +41,7 @@ router.post("/login", async (req: Request, res: Response) => {
             .status(404)
             .json({ message: "Incorrect username or password" });
         } else {
-          return res.status(200).json({ message: "Logged in" });
+          return res.status(200).json({ message: "Logged in", _id: user._id });
         }
       }
     );
