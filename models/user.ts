@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Confirm your password"],
+    required: [true, "Passwords do not match"],
     validate: {
       validator: function (this: User, passwordConfirm: String) {
         return passwordConfirm === this.password;
