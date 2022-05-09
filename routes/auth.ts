@@ -23,7 +23,7 @@ router.post("/register", async (req: Request, res: Response) => {
         sessionId: newSessionId.sessionId,
       });
   } catch (err: any) {
-    return res.status(400).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 });
 
@@ -47,7 +47,7 @@ router.post("/login", async (req: Request, res: Response) => {
       async (err, result) => {
         if (result != true) {
           return res
-            .status(404)
+            .status(401)
             .json({ message: "Incorrect username or password" });
         } else {
           const newSessionId = new Session();
@@ -62,7 +62,7 @@ router.post("/login", async (req: Request, res: Response) => {
       }
     );
   } catch (err: any) {
-    return res.status(404).json({ message: "Incorrect username or password" });
+    return res.status(401).json({ message: "Incorrect username or password" });
   }
 });
 
@@ -77,7 +77,7 @@ router.post("/verifylogin", async (req: Request, res: Response) => {
       }
     });
     if (!isCorrect)
-      return res.status(400).json({ message: "Incorrect session ID" });
+      return res.status(401).json({ message: "Incorrect session ID" });
   } catch (err: any) {
     return res.status(500).json({ message: err });
   }
