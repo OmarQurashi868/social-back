@@ -15,13 +15,11 @@ router.post("/register", async (req: Request, res: Response) => {
     newUser.sessions.push(newSessionId);
     const savedUser = await newUser.save();
     console.log("User added successfully...");
-    return res
-      .status(201)
-      .json({
-        user: savedUser,
-        _id: savedUser._id,
-        sessionId: newSessionId.sessionId,
-      });
+    return res.status(201).json({
+      user: savedUser,
+      _id: savedUser._id,
+      sessionId: newSessionId.sessionId,
+    });
   } catch (err: any) {
     return res.status(500).json({ message: err });
   }
@@ -78,6 +76,21 @@ router.post("/verifylogin", async (req: Request, res: Response) => {
     });
     if (!isCorrect)
       return res.status(401).json({ message: "Incorrect session ID" });
+  } catch (err: any) {
+    return res.status(500).json({ message: err });
+  }
+});
+
+router.post("/removesession", async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.body?.userData?._id);
+    user.sessions.forEach((e: typeof Session, i: number) => {
+      if (req.body?.userData?.sessionId == e.sessionId) {
+        user.sessions.splice(i, 1);
+      }
+    });
+    await user.save();
+    return res.status(200).json({ message: "Removed session" });
   } catch (err: any) {
     return res.status(500).json({ message: err });
   }
