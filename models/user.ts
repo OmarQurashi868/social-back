@@ -68,8 +68,10 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre("save", async function (next) {
-  this.password = await bcrypt.hash(this.password, saltRounds);
-  this.passwordConfirm = undefined;
+  if (this.passwordConfirm != undefined) {
+    this.password = await bcrypt.hash(this.password, saltRounds);
+    this.passwordConfirm = undefined;
+  }
   next();
 });
 
