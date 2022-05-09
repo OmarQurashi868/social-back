@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import { nanoid } from "nanoid";
 
 export const saltRounds = 12;
 
@@ -9,9 +10,24 @@ interface User {
   email: string;
   password: string;
   passwordConfirm: string;
+  creationDate: Date;
+  sessions: [Session];
 }
 
-// Add user sessions for session verification
+interface Session {
+  sessionId: string;
+}
+
+const sessionSchema = new mongoose.Schema({
+  sessionId: {
+    type: String,
+    default: () => nanoid(),
+    index: {
+      expires: "5m",
+      // Change to 15d
+    },
+  },
+});
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -46,6 +62,9 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   creationDate: { type: Date, default: Date.now },
+  sessions: {
+    type: [sessionSchema],
+  },
 });
 
 userSchema.pre("save", async function (next) {
@@ -54,4 +73,10 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-export default mongoose.model("user", userSchema);
+const User = mongoose.model("user", userSchema);
+const Session = mongoose.model("sessionId", sessionSchema);
+
+module.exports = {
+  User: User,
+  Session: Session,
+};

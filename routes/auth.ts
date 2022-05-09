@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 const router = express.Router();
-import User from "../models/user";
+// import {User, Session} from "../models/user";
+const { User, Session } = require("../models/user");
 import bcrypt from "bcrypt";
 
 router.get("/", async (req: Request, res: Response) => {
@@ -10,9 +11,17 @@ router.get("/", async (req: Request, res: Response) => {
 router.post("/register", async (req: Request, res: Response) => {
   const newUser = new User(req.body.userData);
   try {
+    const newSessionId = new Session();
+    newUser.sessions.push(newSessionId);
     const savedUser = await newUser.save();
     console.log("User added successfully...");
-    return res.status(201).json(savedUser);
+    return res
+      .status(201)
+      .json({
+        user: savedUser,
+        _id: savedUser._id,
+        sessionId: newSessionId.sessionId,
+      });
   } catch (err: any) {
     return res.status(400).json({ message: err });
   }
@@ -35,18 +44,42 @@ router.post("/login", async (req: Request, res: Response) => {
     bcrypt.compare(
       req.body.userData.password,
       user.password,
-      (err, result) => {
+      async (err, result) => {
         if (result != true) {
           return res
             .status(404)
             .json({ message: "Incorrect username or password" });
         } else {
-          return res.status(200).json({ message: "Logged in", _id: user._id });
+          const newSessionId = new Session();
+          user.sessions.push(newSessionId);
+          await user.save();
+          return res.status(200).json({
+            message: "Logged in",
+            _id: user._id,
+            sessionId: newSessionId.sessionId,
+          });
         }
       }
     );
   } catch (err: any) {
     return res.status(404).json({ message: "Incorrect username or password" });
+  }
+});
+
+router.post("/verifylogin", async (req: Request, res: Response) => {
+  try {
+    let isCorrect = false;
+    const user = await User.findById(req.body?.userData?._id);
+    user.sessions.forEach((e: typeof Session) => {
+      if (req.body?.userData?.sessionId == e.sessionId) {
+        isCorrect = true;
+        return res.status(200).json({ message: "Correct session ID" });
+      }
+    });
+    if (!isCorrect)
+      return res.status(400).json({ message: "Incorrect session ID" });
+  } catch (err: any) {
+    return res.status(500).json({ message: err });
   }
 });
 
