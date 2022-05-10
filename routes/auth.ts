@@ -96,4 +96,27 @@ router.post("/removesession", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/getuserinfo", async (req: Request, res: Response) => {
+  try {
+    let isCorrect = false;
+    const user = await User.findById(req.body?.userData?._id);
+    user.sessions.forEach((e: typeof Session) => {
+      if (req.body?.userData?.sessionId == e.sessionId) {
+        isCorrect = true;
+        const userData = {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          creationDate: user.creationDate,
+        }
+        return res.status(200).json({userData: userData});
+      }
+    });
+    if (!isCorrect)
+      return res.status(401).json({ message: "Incorrect session ID" });
+  } catch (err: any) {
+    return res.status(500).json({ message: err });
+  }
+})
+
 export default router;
