@@ -15,8 +15,8 @@ router.get("/allposts", async (req: Request, res: Response) => {
 
 router.get("/postid/:id", async (req: Request, res: Response) => {
   try {
-    const posts = await Post.findById(req.params.id);
-    return res.status(200).json(posts);
+    const post = await Post.findById(req.params.id);
+    return res.status(200).json(post);
   } catch (err: any) {
     return res.status(500).json({ message: err });
   }
