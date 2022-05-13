@@ -108,8 +108,8 @@ router.post("/getuserinfo", async (req: Request, res: Response) => {
           username: user.username,
           email: user.email,
           creationDate: user.creationDate,
-        }
-        return res.status(200).json({userData: userData});
+        };
+        return res.status(200).json({ userData: userData });
       }
     });
     if (!isCorrect)
@@ -117,6 +117,15 @@ router.post("/getuserinfo", async (req: Request, res: Response) => {
   } catch (err: any) {
     return res.status(500).json({ message: err });
   }
-})
+});
+
+router.post("/getusername", async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.body?.userData?._id);
+    return res.status(200).json({ userData: {username: user.username} });
+  } catch (err: any) {
+    return res.status(500).json({ message: err });
+  }
+});
 
 export default router;

@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Username cannot be empty"],
     minlength: [3, "Username must be 3 characters or more"],
+    maxlength: [15, "Username cannot be more than 15 characters"],
     unique: [true, "Username is taken"],
     validate: [validator.isAlphanumeric, "Username must be alphanumerical"],
   },
@@ -48,6 +49,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Password cannot be empty"],
     minlength: [8, "Password must be 8 characters or more"],
+    maxlength: [24, "Password cannot be more than 24 characters"],
     select: false,
   },
   passwordConfirm: {
