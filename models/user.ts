@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 
 export const saltRounds = 12;
 
-interface User {
+export interface User {
   username: string;
   email: string;
   password: string;
@@ -56,4 +56,4 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-export default mongoose.model("user", userSchema);
+export default mongoose.model("User", userSchema);

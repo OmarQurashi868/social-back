@@ -96,9 +96,9 @@ router.post("/removesession", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/getuserinfo", async (req: Request, res: Response) => {
+router.get("/getuserinfo/:id", async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.body?.userData?._id);
+    const user = await User.findById(req.params.id);
     return res.status(200).json({ userData: user });
   } catch (err: any) {
     return res.status(500).json({ message: err });
