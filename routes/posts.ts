@@ -58,6 +58,22 @@ router.get("/postid/:id", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/latest/:id", async (req: Request, res: Response) => {
+  try {
+    const lastPost = await Post.findById(req.params.id);
+    const posts = await Post.find({
+      creationDate: { $gte: lastPost.creationDate },
+    }).populate("creator");
+    if (posts.length < 2)
+      return res.status(200).json({ message: "Already on latest" });
+    posts.sort(compare);
+    posts.pop();
+    return res.status(200).json(posts);
+  } catch (err: any) {
+    return res.status(400).json({ message: err });
+  }
+});
+
 router.post("/newpost", async (req: Request, res: Response) => {
   const post = new Post({
     title: req.body?.postData?.title,
